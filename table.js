@@ -12,6 +12,7 @@ function showInfo(data, tabletop) {
     for (j in data[0]) {
         $('#title').append('<th>' + j + '</th>');
     }
+    $('th:first').addClass("active-up");
     for (var i = 0; i < data.length; i++) {
         $('#products').append('<tr id="row' + i + '" ></tr>');
         for (var n in data[i]) {

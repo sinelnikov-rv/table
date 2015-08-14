@@ -1,3 +1,6 @@
-table {
+table, td, th {
     border:solid 1px;
+}
+.active-up {
+    color: grey;
 }
