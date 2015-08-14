@@ -1,4 +1,4 @@
-window.onload = function() { init() };
+window.onload = function() { init(); };
 
 var public_spreadsheet_url = '1TIF8w8uAB-iigH9fUHhjX6Vgc_0KEDD4ZdFlSDope38';
 
@@ -14,9 +14,10 @@ function showInfo(data, tabletop) {
     }
     $('th:first').addClass("active-up");
     for (var i = 0; i < data.length; i++) {
-        $('#products').append('<tr id="row' + i + '" ></tr>');
+        $('#values').append('<tr id="row' + i + '" ></tr>');
         for (var n in data[i]) {
             $('#row' + i).append('<td>' + data[i][n] + '</td>');
         }
     }
+    $("#products").tablesorter();
 }
