@@ -34,4 +34,31 @@ function showInfo(data, tabletop) {
         }
     }
     function getCellValue(row, index){ return $(row).children('td').eq(index).html() }
+    $('table').each(function(){
+
+        var table = $(this)
+        var headers = table.find('th').length
+        var filterrow = $('<tr>').insertAfter($(this).find('th:last()').parent())
+        for (var i = 0; i < headers; i++){
+            filterrow.append($('<th>').append($('<input>').attr('type','text').keyup(function(){
+                table.find('tr').show()
+                var self = $(this)
+                filterrow.find('input[type=text]').each(function(){
+                    console.log(self);
+                    var index = $(this).parent().index() + 1;
+                    var filter = $(this).val() != ''
+                    $(this).toggleClass('filtered', filter)
+                    if (filter){
+                        var el = 'td:nth-child('+index+')'
+                        var criteria = ":contains('"+$(this).val()+"')"
+                        table.find(el+':not('+criteria+')').parent().hide()
+                    }
+                });
+            })))
+        }
+        filterrow.append($('<th>').append($('<input>').attr('type','button').val('Clear Filter').click(function(){
+            $(this).parent().parent().find('input[type=text]').val('').toggleClass('filtered', false)
+            table.find('tr').show()
+        })))
+    })
 }
