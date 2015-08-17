@@ -2,5 +2,8 @@ table, td, th {
     border:solid 1px;
 }
 .active-up {
-    color: grey;
+    color: red;
+}
+.active-down {
+    color: green;
 }
