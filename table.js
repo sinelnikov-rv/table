@@ -25,21 +25,29 @@ function showInfo(data) {
         });
         return newItem;
     });
-    for (var j in newData[0]) {
-        $('#title').append('<th>' + j + '</th>');
-        if(j != 'product') {
-            $('#filter').append('<td id="' + j + '"><input id="'+j+'Min" value="' + min(newData,j) + '"><input id="'+ j + 'Max" value="' + max(newData,j) + '"></td>')
-        }
-        else {
-            $('#filter').append('<td></td>')
-        }
-    }
-    for (var i = 0; i < newData.length; i++) {
-        $('#products').append('<tr id="row' + i + '" ></tr>');
-        for (var n in newData[i]) {
-            $('#row' + i).append('<td>' + newData[i][n] + '</td>');
+    function createHeadTable(dataForTable) {
+        $('body').append('<table id="products"><thead><tr id="title"></tr><tr id="filter"></tr></thead></table>');
+        for (var j in dataForTable[0]) {
+            $('#title').append('<th>' + j + '</th>');
+            if (j != 'product') {
+                $('#filter').append('<td id="' + j + '"><input id="' + j + 'Min" value="' + min(dataForTable, j) + '"><input id="' + j + 'Max" value="' + max(dataForTable, j) + '"></td>')
+            }
+            else {
+                $('#filter').append('<td></td>')
+            }
         }
     }
+    function createBodyTable(dataForRow) {
+        $('tbody').remove();
+        for (var i = 0; i < dataForRow.length; i++) {
+            $('#products').append('<tr id="row' + i + '" ></tr>');
+            for (var n in dataForRow[i]) {
+                $('#row' + i).append('<td>' + dataForRow[i][n] + '</td>');
+            }
+        }
+    }
+    createHeadTable(newData);
+    createBodyTable(newData);
     $('th').click(function() {
         console.log(this);
         var table = $('table');
@@ -66,7 +74,7 @@ function showInfo(data) {
     function filterData(data, field, min, max) {
     return data.filter(function (item) {
         var sourceValue = +item[field].replace('-','0');
-        if (isNaN(sourceValue) || (sourceValue < max && sourceValue > min)) {
+        if (isNaN(sourceValue) || (sourceValue <= max && sourceValue >= min)) {
             return true;
         } else {
             return false;
@@ -93,30 +101,6 @@ function showInfo(data) {
             newMax = $('#'+field+'Max').val();
             newMin = $('#'+field+'Min').val();
         var filtered = filterData(newData,field,newMin,newMax);
-        console.log(filtered);
+        createBodyTable(filtered);
     });
-
-        /*var table = $('table')
-        var headers = table.find('th').length;
-        var filterrow = table.append('<tr>');
-        for (var i = 0; i < headers; i++){
-            filterrow.append($('<th>').append($('<input>').attr('type','text').keyup(function(){
-                table.find('tr').show()
-                var self = $(this)
-                filterrow.find('input[type=text]').each(function(){
-                    var index = $(this).parent().index() + 1;
-                    var filter = $(this).val() != ''
-                    $(this).toggleClass('filtered', filter)
-                    if (filter){
-                        var el = 'td:nth-child('+index+')'
-                        var criteria = ":contains('"+$(this).val()+"')"
-                        table.find(el+':not('+criteria+')').parent().hide()
-                    }
-                });
-            })))
-        }
-        filterrow.append($('<th>').append($('<input>').attr('type','button').val('Clear Filter').click(function(){
-            $(this).parent().parent().find('input[type=text]').val('').toggleClass('filtered', false)
-            table.find('tr').show()
-        })))*/
 }
