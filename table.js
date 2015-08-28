@@ -29,6 +29,10 @@ function showInfo(data) {
         $('body').append('<table id="products"><thead><tr id="title"></tr><tr id="filter"></tr></thead></table>');
         for (var j in dataForTable[0]) {
             $('#title').append('<th>' + j + '</th>');
+        }
+    }
+    function createFilterTable(dataForTable) {
+        for (var j in dataForTable[0]) {
             if (j != 'product') {
                 $('#filter').append('<td id="' + j + '"><input id="' + j + 'Min" value="' + min(dataForTable, j) + '"><input id="' + j + 'Max" value="' + max(dataForTable, j) + '"></td>')
             }
@@ -46,8 +50,9 @@ function showInfo(data) {
             }
         }
     }
-    createHeadTable(newData);
-    createBodyTable(newData);
+        createHeadTable(data);
+        createFilterTable(newData);
+        createBodyTable(newData);
     $('th').click(function() {
         console.log(this);
         var table = $('table');
