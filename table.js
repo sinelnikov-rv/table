@@ -23,35 +23,49 @@ function showInfo(data) {
         Object.keys(item).forEach(function (key) {
             newItem[OPTIONS[key]] = item[key].replace(',','.');
         });
+        newItem.selected = false;
+        newItem.html = '';
         return newItem;
     });
     function createHeadTable(dataForTable) {
-        $('body').append('<table id="products"><thead><tr id="title"></tr><tr id="filter"></tr></thead></table>');
+        $('body').append('<table id="products"><thead><tr id="title"></tr><tr id="filter"></tr></thead></table>'); //
         for (var j in dataForTable[0]) {
             $('#title').append('<th>' + j + '</th>');
         }
     }
     function createFilterTable(dataForTable) {
         for (var j in dataForTable[0]) {
-            if (j != 'product') {
+            if (j != 'product' && j != 'html' && j != 'selected') {
                 $('#filter').append('<td id="' + j + '"><input id="' + j + 'Min" value="' + min(dataForTable, j) + '"><input id="' + j + 'Max" value="' + max(dataForTable, j) + '"></td>')
-            }
-            else {
-                $('#filter').append('<td></td>')
+
+            } else {
+                    $('#filter').append('<td></td>')
+                }
+
             }
         }
-    }
     function createBodyTable(dataForRow) {
+
         $('tbody').remove();
         for (var i = 0; i < dataForRow.length; i++) {
-            $('#products').append('<tr id="row' + i + '" ></tr>');
-            for (var n in dataForRow[i]) {
-                $('#row' + i).append('<td>' + dataForRow[i][n] + '</td>');
+            dataForRow[i].html +='<tr>';
+            for (var n in dataForRow[i]){
+                if(n != 'html' && n !='selected'){
+                    dataForRow[i].html += '<td>' + dataForRow[i][n] + '</td>';
+                }
             }
+            dataForRow[i].html += '<td><input type="checkbox"></td>';
+
+            $('#products').append(dataForRow[i].html);
+            //$('#products').append('<tr id="row' + i + '" ></tr>');
+            //for (var n in dataForRow[i]) {
+            //    $('#row' + i).append('<td>' + dataForRow[i][n] + '</td>');
+            //}
         }
+        console.log(dataForRow);
     }
         createHeadTable(data);
-        createFilterTable(newData);
+        //createFilterTable(newData);
         createBodyTable(newData);
     $('th').click(function() {
         console.log(this);
@@ -79,7 +93,7 @@ function showInfo(data) {
     function filterData(data, field, min, max) {
     return data.filter(function (item) {
         var sourceValue = +item[field].replace('-','0');
-        if (isNaN(sourceValue) || (sourceValue <= max && sourceValue >= min)) {
+        if(isNaN(sourceValue) || (sourceValue <= max && sourceValue >= min)) {
             return true;
         } else {
             return false;
@@ -101,11 +115,15 @@ function showInfo(data) {
         }
         return Math.max.apply(null,array);
     }
-    $('input').keyup(function(){
+    /*$('input').keyup(function(){
         var field = $(this).parent().attr('id');
-            newMax = $('#'+field+'Max').val();
-            newMin = $('#'+field+'Min').val();
+            var newMax = $('#'+field+'Max').val();
+            var newMin = $('#'+field+'Min').val();
         var filtered = filterData(newData,field,newMin,newMax);
         createBodyTable(filtered);
-    });
+    });*/
+    $(' :checkbox').click(function(){
+        console.log(this);
+    })
+
 }
