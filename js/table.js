@@ -37,36 +37,43 @@ function showInfo(data) {
         return this;
     }
     $('#clearChecked').click(clearChecked.bind(newData));
+
     function clearChecked() {
         newData = this.map(function (item) {
             item.selected = false;
             item.html.find('input').attr('checked',false);
-        return item;
+            return item;
         });
     }
-    var recipe = {};
+    var recipe = [];
     $('#addToRecipe').click(addToRecipe.bind(newData));
     function addToRecipe() {
-        recipe = this.filter(function(item){
-           if(item.selected) {
-               return true;
-           }else {
-               return false;
-           }
-        });
+        this.forEach(function(item) {
+                if (recipe.indexOf(item) === -1) {
+                    if (item.selected) {
+                        recipe.push(item);
+                    }
+                }
+            }
+        );
+        clearChecked.call(newData);
+        console.log(recipe);
         return recipe;
     }
     $('#clearRecipe').click(function(){
-        return recipe ={};
+        return recipe =[];
     });
-    var savedRecipe = {};
+    var savedRecipe = [];
     $('#saveRecipe').click(saveRecipe);
     function saveRecipe () {
-        if(recipe.length > 0 && $('#recipeName').val() != ""){
-        savedRecipe = recipe.map(function (item){
-            item.recipe = $('#recipeName').val();
-            return item;
-        })};
+        if(recipe.length > 0 && $('#recipeName').val() !== ""){
+            savedRecipe = recipe.map(function (item){
+                item.recipe = $('#recipeName').val();
+                return item;
+            })};
+        $('#recipeName').val('');
+        console.log(savedRecipe);
+        console.log(newData);
         return savedRecipe;
     }
     function createHeadTable(dataForTable) {
@@ -76,24 +83,27 @@ function showInfo(data) {
         }
     }
 
-    /*function createFilterTable(dataForTable) {
-        for (var j in dataForTable[0]) {
-            if (j != 'product' && j != 'html' && j != 'selected') {
-                $('#filter').append('<td id="' + j + '"><input id="' + j + 'Min" value="' + min(dataForTable, j) + '"><br><input id="' + j + 'Max" value="' + max(dataForTable, j) + '"></td>')
+    /* function createFilterTable(dataForTable) {
+     for (var j in dataForTable[0]) {
+     if (j !== 'product' && j !== 'html' && j !== 'selected') {
+     $('#filter').append('<td id="' + j + '"><input id="' + j + 'Min" value="' + min(dataForTable, j) + '"><br><input id="' + j + 'Max" value="' + max(dataForTable, j) + '"></td>')
 
-            } else {
-                    $('#filter').append('<td></td>')
-                }
+     } else {
+     if(j === 'html' || j === 'selected'){
+     $('#filter').append('');
+     }
+     $('#filter').append('<td></td>');
+     }
 
-            }
-        }*/
+     }
+     }*/
     function createHtml (dataForRow){
         var row = $('<tr>');
-            for (var n in dataForRow){
-                    row.append('<td>' + dataForRow[n].replace(',','.') + '</td>');
-                }
-            row.append('<td><input type="checkbox"></td>');
-            return row;
+        for (var n in dataForRow){
+            row.append('<td>' + dataForRow[n].replace(',','.') + '</td>');
+        }
+        row.append('<td><input type="checkbox"></td>');
+        return row;
     }
     function createBodyTable(dataForRow) {
         $('tbody').remove();
@@ -101,13 +111,11 @@ function showInfo(data) {
             $('#products').append(dataForRow[i].html);
         }
     }
-        createHeadTable(data);
-        //createFilterTable(newData);
-        createBodyTable(newData);
+    createHeadTable(data);
+    //createFilterTable(newData);
+    createBodyTable(newData);
 
     $('th').click(function() {
-        console.log(recipe);
-        console.log(newData);
         var table = $('table');
         var rows = table.find("tbody > tr").toArray().sort(comparer($(this).index()));
         this.asc = !this.asc;
@@ -127,37 +135,36 @@ function showInfo(data) {
     function getCellValue(row, index){
         return $(row).children('td').eq(index).html();
     }
+    /*function filterData(data, field, min, max) {
+     return data.filter(function (item) {
+     var sourceValue = +item[field].replace('-','0');
+     if(isNaN(sourceValue) || (sourceValue <= max && sourceValue >= min)) {
+     return true;
+     } else {
+     return false;
+     }
+     });
 
-    function filterData(data, field, min, max) {
-    return data.filter(function (item) {
-        var sourceValue = +item[field].replace('-','0');
-        if(isNaN(sourceValue) || (sourceValue <= max && sourceValue >= min)) {
-            return true;
-        } else {
-            return false;
-        }
-    });
-
-    }
-    /*function min(data,field){
-        var array = [];
-        for (var i in data){
-            array.push((data[i][field]).replace('-','0'));
-        }
-        return Math.min.apply(null,array);
-    }
-    function max(data,field){
-        var array = [];
-        for (var i in data){
-            array.push((data[i][field]).replace('-','0'));
-        }
-        return Math.max.apply(null,array);
-    }
-    $('input').keyup(function(){
-        var field = $(this).parent().attr('id');
-            var newMax = $('#'+field+'Max').val();
-            var newMin = $('#'+field+'Min').val();
-        var filtered = filterData(newData,field,newMin,newMax);
-        createBodyTable(filtered);
-    });*/
+     }
+     function min(data,field){
+     var array = [];
+     for (var i in data){
+     array.push((data[i][field]).replace('-','0'));
+     }
+     return Math.min.apply(null,array);
+     }
+     function max(data,field){
+     var array = [];
+     for (var i in data){
+     array.push((data[i][field]).replace('-','0'));
+     }
+     return Math.max.apply(null,array);
+     }
+     $('input').keyup(function(){
+     var field = $(this).parent().attr('id');
+     var newMax = $('#'+field+'Max').val();
+     var newMin = $('#'+field+'Min').val();
+     var filtered = filterData(newData,field,newMin,newMax);
+     createBodyTable(filtered);
+     });*/
 }
