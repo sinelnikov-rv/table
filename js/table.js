@@ -24,19 +24,38 @@ function showInfo(data) {
             newItem[OPTIONS[key]] = item[key].replace(',','.');
         });
         newItem.selected = false;
-        newItem.html = '';
+        newItem.html = createHtml(item);
+        newItem.html.find('input').change(change.bind(newItem));
         return newItem;
     });
+    function change (){
+        if (!this.selected) {
+            this.selected = true;
+        } else {
+            this.selected = false;
+        }
+        return this;
+    }
+    $('#clearChecked').click(clearChecked.bind(newData));
+    function clearChecked() {
+        newData = this.map(function (item) {
+            item.selected = false;
+            item.html.find('input').attr('checked',false);
+        return item;
+        });
+    }
+
     function createHeadTable(dataForTable) {
-        $('body').append('<table id="products"><thead><tr id="title"></tr><tr id="filter"></tr></thead></table>'); //
+        $('#leftside').append('<table id="products" class="table-bordered table-striped"><thead><tr id="title"></tr><tr id="filter"></tr></thead></table>'); //
         for (var j in dataForTable[0]) {
             $('#title').append('<th>' + j + '</th>');
         }
     }
+
     function createFilterTable(dataForTable) {
         for (var j in dataForTable[0]) {
             if (j != 'product' && j != 'html' && j != 'selected') {
-                $('#filter').append('<td id="' + j + '"><input id="' + j + 'Min" value="' + min(dataForTable, j) + '"><input id="' + j + 'Max" value="' + max(dataForTable, j) + '"></td>')
+                $('#filter').append('<td id="' + j + '"><input id="' + j + 'Min" value="' + min(dataForTable, j) + '"><br><input id="' + j + 'Max" value="' + max(dataForTable, j) + '"></td>')
 
             } else {
                     $('#filter').append('<td></td>')
@@ -44,34 +63,28 @@ function showInfo(data) {
 
             }
         }
-    function createBodyTable(dataForRow) {
-
-        $('tbody').remove();
-        for (var i = 0; i < dataForRow.length; i++) {
-            dataForRow[i].html +='<tr>';
-            for (var n in dataForRow[i]){
-                if(n != 'html' && n !='selected'){
-                    dataForRow[i].html += '<td>' + dataForRow[i][n] + '</td>';
+    function createHtml (dataForRow){
+        var row = $('<tr>');
+            for (var n in dataForRow){
+                    row.append('<td>' + dataForRow[n].replace(',','.') + '</td>');
                 }
-            }
-            dataForRow[i].html += '<td><input type="checkbox"></td>';
-
+            row.append('<td><input type="checkbox"></td>');
+            return row;
+    }
+    function createBodyTable(dataForRow) {
+        $('tbody').remove();
+        for (var i in dataForRow) {
             $('#products').append(dataForRow[i].html);
-            //$('#products').append('<tr id="row' + i + '" ></tr>');
-            //for (var n in dataForRow[i]) {
-            //    $('#row' + i).append('<td>' + dataForRow[i][n] + '</td>');
-            //}
         }
-        console.log(dataForRow);
     }
         createHeadTable(data);
         //createFilterTable(newData);
         createBodyTable(newData);
+
     $('th').click(function() {
-        console.log(this);
+        console.log(newData);
         var table = $('table');
         var rows = table.find("tbody > tr").toArray().sort(comparer($(this).index()));
-
         this.asc = !this.asc;
         if (!this.asc){
             rows = rows.reverse();
@@ -122,8 +135,4 @@ function showInfo(data) {
         var filtered = filterData(newData,field,newMin,newMax);
         createBodyTable(filtered);
     });*/
-    $(' :checkbox').click(function(){
-        console.log(this);
-    })
-
 }

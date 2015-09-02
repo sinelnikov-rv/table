@@ -3,12 +3,27 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="tabletop/src/tabletop.js"></script>
-    <script type="text/javascript" src="table.js"></script>
+    <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="js/tabletop.js"></script>
+    <script type="text/javascript" src="js/table.js"></script>
 
-    <link href="style.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+
+    <script src="js/bootstrap.min.js"></script>
+    <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
+<div class="row">
+    <div class="col-md-6" id="leftside"></div>
+    <div class="col-md-6" id="rightside"></div>
+</div>
+<div class="row">
+    <div class="col-md-3"><input type="button" value="Очистить выделеное" id="clearChecked"></div>
+    <div class="col-md-3"><input type="button" value="Добавить в рецепт" id="addToRecipe"></div>
+    <div class="col-md-3"><input type="button" value="Очистить рецепт" id="clearRecipe"></div>
+    <div class="col-md-3"><input type="button" value="Сохраить рецепт в буфер" id="saveRecipe"></div>
+</div>
 </body>
 </html>
