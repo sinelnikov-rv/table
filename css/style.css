@@ -7,3 +7,15 @@
 .active-down {
     color: green;
 }
+table {
+    width: 100%;
+}
+.scroll-table {
+
+    overflow: auto;
+    height: 300px;
+}
+.scroll-table tr.fixed {
+    position: relative;
+    top: expression(this.parentElement.parentElement.parentElement.scrollTop);
+}

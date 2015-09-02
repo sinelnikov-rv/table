@@ -44,15 +44,39 @@ function showInfo(data) {
         return item;
         });
     }
-
+    var recipe = {};
+    $('#addToRecipe').click(addToRecipe.bind(newData));
+    function addToRecipe() {
+        recipe = this.filter(function(item){
+           if(item.selected) {
+               return true;
+           }else {
+               return false;
+           }
+        });
+        return recipe;
+    }
+    $('#clearRecipe').click(function(){
+        return recipe ={};
+    });
+    var savedRecipe = {};
+    $('#saveRecipe').click(saveRecipe);
+    function saveRecipe () {
+        if(recipe.length > 0 && $('#recipeName').val() != ""){
+        savedRecipe = recipe.map(function (item){
+            item.recipe = $('#recipeName').val();
+            return item;
+        })};
+        return savedRecipe;
+    }
     function createHeadTable(dataForTable) {
-        $('#leftside').append('<table id="products" class="table-bordered table-striped"><thead><tr id="title"></tr><tr id="filter"></tr></thead></table>'); //
+        $('#leftside').append('<table id="products" class="table-bordered table-striped"><thead><tr class="fixed" id="title"></tr><tr id="filter"></tr></thead></table>');
         for (var j in dataForTable[0]) {
             $('#title').append('<th>' + j + '</th>');
         }
     }
 
-    function createFilterTable(dataForTable) {
+    /*function createFilterTable(dataForTable) {
         for (var j in dataForTable[0]) {
             if (j != 'product' && j != 'html' && j != 'selected') {
                 $('#filter').append('<td id="' + j + '"><input id="' + j + 'Min" value="' + min(dataForTable, j) + '"><br><input id="' + j + 'Max" value="' + max(dataForTable, j) + '"></td>')
@@ -62,7 +86,7 @@ function showInfo(data) {
                 }
 
             }
-        }
+        }*/
     function createHtml (dataForRow){
         var row = $('<tr>');
             for (var n in dataForRow){
@@ -82,6 +106,7 @@ function showInfo(data) {
         createBodyTable(newData);
 
     $('th').click(function() {
+        console.log(recipe);
         console.log(newData);
         var table = $('table');
         var rows = table.find("tbody > tr").toArray().sort(comparer($(this).index()));
@@ -114,7 +139,7 @@ function showInfo(data) {
     });
 
     }
-    function min(data,field){
+    /*function min(data,field){
         var array = [];
         for (var i in data){
             array.push((data[i][field]).replace('-','0'));
@@ -128,7 +153,7 @@ function showInfo(data) {
         }
         return Math.max.apply(null,array);
     }
-    /*$('input').keyup(function(){
+    $('input').keyup(function(){
         var field = $(this).parent().attr('id');
             var newMax = $('#'+field+'Max').val();
             var newMin = $('#'+field+'Min').val();

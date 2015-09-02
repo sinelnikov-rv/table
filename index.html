@@ -16,14 +16,19 @@
 </head>
 <body>
 <div class="row">
-    <div class="col-md-6" id="leftside"></div>
-    <div class="col-md-6" id="rightside"></div>
+    <div class="col-md-6 scroll-table" id="leftside"></div>
+    <div class="col-md-6" id="rightside">
+            <div class="row"><input type="checkbox">Игридиент по умолчанию включён в рецепт<input type="number" min="1" step="1" value="1"></div>
+            <div class="row"><input type="checkbox">Ингридиент который не учитывается в расчётах<input type="number" min="0" step="1" value="0"></div>
+            <div class="row"><input type="text" id="recipeName"></div>
+    </div>
 </div>
 <div class="row">
-    <div class="col-md-3"><input type="button" value="Очистить выделеное" id="clearChecked"></div>
-    <div class="col-md-3"><input type="button" value="Добавить в рецепт" id="addToRecipe"></div>
-    <div class="col-md-3"><input type="button" value="Очистить рецепт" id="clearRecipe"></div>
-    <div class="col-md-3"><input type="button" value="Сохраить рецепт в буфер" id="saveRecipe"></div>
+    <div class="col-md-1"><input type="button" value="Очистить выделеное" id="clearChecked"></div>
+    <div class="col-md-1 col-md-offset-3"><input type="button" value="Добавить в рецепт" id="addToRecipe"></div>
+    <div class="col-md-1"></div>
+    <div class="col-md-1"><input type="button" value="Очистить рецепт" id="clearRecipe"></div>
+    <div class="col-md-1 col-md-offset-2"><input type="button" value="Сохраить рецепт в буфер" id="saveRecipe"></div>
 </div>
 </body>
 </html>
