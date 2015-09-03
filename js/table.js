@@ -2,14 +2,14 @@ window.onload = function() { init(); };
 
 var public_spreadsheet_url = '1TIF8w8uAB-iigH9fUHhjX6Vgc_0KEDD4ZdFlSDope38';
 
-var OPTIONS = {
+/*var OPTIONS = {
     'Вода, г': 'voda',
     'Белки, г': 'belki',
     'Жиры, г': 'jiri',
     'Углеводы, г': 'uglevodi',
     'ккал': 'kkal',
     'Продукт': 'product'
-};
+};*/
 
 function init() {
     Tabletop.init( { key: public_spreadsheet_url,
@@ -21,7 +21,7 @@ function showInfo(data) {
     var newData = data.map(function (item) {
         var newItem = {};
         Object.keys(item).forEach(function (key) {
-            newItem[OPTIONS[key]] = item[key].replace(',','.');
+            newItem[key] = item[key].replace(',','.');
         });
         newItem.selected = false;
         newItem.html = createHtml(item);
@@ -68,18 +68,26 @@ function showInfo(data) {
     function saveRecipe () {
         if(recipe.length > 0 && $('#recipeName').val() !== ""){
             savedRecipe = recipe.map(function (item){
-                item.recipe = $('#recipeName').val();
-                return item;
-            })};
+                    var newItem = {};
+                    Object.keys(item).forEach(function (key) {
+                        newItem[key] = item[key];
+                    }
+                    );
+                    delete newItem.selected;
+                    delete newItem.html;
+                newItem.Рецепт = $('#recipeName').val();
+                return newItem;
+            }
+            )
+        };
         $('#recipeName').val('');
         console.log(savedRecipe);
-        console.log(newData);
         return savedRecipe;
     }
-    function createHeadTable(dataForTable) {
-        $('#leftside').append('<table id="products" class="table-bordered table-striped"><thead><tr class="fixed" id="title"></tr><tr id="filter"></tr></thead></table>');
+    function createHeadTable(tableID, position, dataForTable) {
+        $('#'+position+'').append('<table id="' + tableID + '" class="table-bordered table-striped"><thead><tr class="fixed"></tr></thead></table>');
         for (var j in dataForTable[0]) {
-            $('#title').append('<th>' + j + '</th>');
+            $('#' + tableID + ' > thead > tr').append('<th>' + j + '</th>');
         }
     }
 
@@ -105,15 +113,15 @@ function showInfo(data) {
         row.append('<td><input type="checkbox"></td>');
         return row;
     }
-    function createBodyTable(dataForRow) {
-        $('tbody').remove();
+    function createBodyTable(tableID, dataForRow) {
+        $('#'+tableID +' > tbody').remove();
         for (var i in dataForRow) {
-            $('#products').append(dataForRow[i].html);
+            $('#'+tableID+'').append(dataForRow[i].html);
         }
     }
-    createHeadTable(data);
+    createHeadTable("products", "leftside",data);
     //createFilterTable(newData);
-    createBodyTable(newData);
+    createBodyTable('products', newData);
 
     $('th').click(function() {
         var table = $('table');
