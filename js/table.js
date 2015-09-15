@@ -3,13 +3,13 @@ window.onload = function() { init(); };
 var public_spreadsheet_url = '1TIF8w8uAB-iigH9fUHhjX6Vgc_0KEDD4ZdFlSDope38';
 
 /*var OPTIONS = {
-    'Вода, г': 'voda',
-    'Белки, г': 'belki',
-    'Жиры, г': 'jiri',
-    'Углеводы, г': 'uglevodi',
-    'ккал': 'kkal',
-    'Продукт': 'product'
-};*/
+ 'Вода, г': 'voda',
+ 'Белки, г': 'belki',
+ 'Жиры, г': 'jiri',
+ 'Углеводы, г': 'uglevodi',
+ 'ккал': 'kkal',
+ 'Продукт': 'product'
+ };*/
 
 function init() {
     Tabletop.init( { key: public_spreadsheet_url,
@@ -26,6 +26,7 @@ function showInfo(data) {
         newItem.selected = false;
         newItem.html = createHtml(item);
         newItem.html.find('input').change(change.bind(newItem));
+        newItem.table='products';
         return newItem;
     });
     function change (){
@@ -48,44 +49,89 @@ function showInfo(data) {
     var recipe = [];
     $('#addToRecipe').click(addToRecipe.bind(newData));
     function addToRecipe() {
-        this.forEach(function(item) {
+        recipe = this.filter(function(item) {
                 if (recipe.indexOf(item) === -1) {
                     if (item.selected) {
-                        recipe.push(item);
+                        //recipe.push(item);
+                        return item;
+
                     }
-                }
+                    }
+                /*newitem.table = 'recipe';
+                console.log(newitem);
+                return newitem;*/
             }
         );
-        clearChecked.call(newData);
-        console.log(recipe);
+        recipe = recipe.map(function(item){
+            var newItem = {};
+            Object.keys(item).forEach(function (key) {
+                newItem[key] = item[key];
+            });
+            newItem.selected = false;
+            newItem.table = 'recipe';
+            return newItem;
+
+        });
+        //$('#recipe').detach();
+console.log(recipe);
+        //console.log(newData);
+
+        createBodyTable(recipe);
+        //clearChecked.call(newData);
         return recipe;
     }
-    $('#clearRecipe').click(function(){
-        return recipe =[];
-    });
+    $('#deleteFromRecipe').click(deleteFromRecipe.bind(recipe));
+    function deleteFromRecipe() {
+        var deleteItems =[];
+        this.forEach(function(item){
+            if(item.selected) {
+                deleteItems.push(recipe.indexOf(item));
+                item.selected = false;
+                item.table = 'products';
+            }
+        });
+        for(var i=deleteItems.length-1;i>=0;i--){
+            recipe.splice(deleteItems[i],1);
+        }
+        clearChecked.call(newData);
+        createBodyTable(newData);
+    }
+    $('#clearRecipe').click(clearRecipe);
+        function clearRecipe(){
+        recipe.forEach(function(item){
+            item.selected = true;
+        });
+        deleteFromRecipe.call(recipe);
+        recipe =[];
+    };
     var savedRecipe = [];
     $('#saveRecipe').click(saveRecipe);
     function saveRecipe () {
+        console.log(recipe);
+        var recipeName = $('#recipeName').val();
         if(recipe.length > 0 && $('#recipeName').val() !== ""){
-            savedRecipe = recipe.map(function (item){
+            console.log(recipeName);
+            var recipeName = recipe.map(function (item){
                     var newItem = {};
                     Object.keys(item).forEach(function (key) {
-                        newItem[key] = item[key];
-                    }
+                            newItem[key] = item[key];
+                        }
                     );
                     delete newItem.selected;
                     delete newItem.html;
-                newItem.Рецепт = $('#recipeName').val();
-                return newItem;
-            }
-            )
-        };
+                    newItem.Рецепт = $('#recipeName').val();
+                    return newItem;
+                }
+            );
+            savedRecipe.push(recipeName);
+        }
         $('#recipeName').val('');
+
         console.log(savedRecipe);
         return savedRecipe;
     }
     function createHeadTable(tableID, position, dataForTable) {
-        $('#'+position+'').append('<table id="' + tableID + '" class="table-bordered table-striped"><thead><tr class="fixed"></tr></thead></table>');
+        $('#' + position + '').append('<table id="' + tableID + '" class="table-bordered table-striped"><thead><tr class="fixed"></tr></thead></table>');
         for (var j in dataForTable[0]) {
             $('#' + tableID + ' > thead > tr').append('<th>' + j + '</th>');
         }
@@ -113,18 +159,21 @@ function showInfo(data) {
         row.append('<td><input type="checkbox"></td>');
         return row;
     }
-    function createBodyTable(tableID, dataForRow) {
-        $('#'+tableID +' > tbody').remove();
+    function createBodyTable(dataForRow) {
+        //$('#'+tableID +' > tbody').remove();
         for (var i in dataForRow) {
+            var tableID = dataForRow[i].table;
             $('#'+tableID+'').append(dataForRow[i].html);
         }
     }
     createHeadTable("products", "leftside",data);
+    createHeadTable("recipe", "bottom",data);
     //createFilterTable(newData);
-    createBodyTable('products', newData);
+    createBodyTable(newData);
 
     $('th').click(function() {
-        var table = $('table');
+        console.dir(savedRecipe);
+        var table = $(this).closest('table');
         var rows = table.find("tbody > tr").toArray().sort(comparer($(this).index()));
         this.asc = !this.asc;
         if (!this.asc){
