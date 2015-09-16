@@ -49,20 +49,27 @@ function showInfo(data) {
     var recipe = [];
     $('#addToRecipe').click(addToRecipe.bind(newData));
     function addToRecipe() {
-        recipe = this.filter(function(item) {
-                if (recipe.indexOf(item) === -1) {
+        var elementExist = false;
+        this.forEach(function (item) {
+                if (recipe.length === 0) {
                     if (item.selected) {
-                        //recipe.push(item);
-                        return item;
-
+                        recipe.push(item);
                     }
-                    }
-                /*newitem.table = 'recipe';
-                console.log(newitem);
-                return newitem;*/
+                } else {
+                    recipe.some(function (recipeItem) {
+                        if (recipeItem['Продукт'] === item['Продукт']) {
+                            return elementExist = true;
+                             //if (recipe.indexOf(item) === -1) {
+                        }else {
+                            if (item.selected) {
+                                recipe.push(item);
+                            }
+                        }
+                    })
+                }
             }
         );
-        recipe = recipe.map(function(item){
+        recipe = recipe.map(function (item) {
             var newItem = {};
             Object.keys(item).forEach(function (key) {
                 newItem[key] = item[key];
@@ -72,32 +79,34 @@ function showInfo(data) {
             return newItem;
 
         });
-        //$('#recipe').detach();
-console.log(recipe);
-        //console.log(newData);
-
         createBodyTable(recipe);
-        //clearChecked.call(newData);
+        clearChecked.call(newData);
+        console.log(recipe);
         return recipe;
     }
     $('#deleteFromRecipe').click(deleteFromRecipe.bind(recipe));
-    function deleteFromRecipe() {
+    function deleteFromRecipe(){
+        console.log(this);
         var deleteItems =[];
         this.forEach(function(item){
+            console.log(recipe.indexOf(item));
             if(item.selected) {
+                console.log(item.selected);
                 deleteItems.push(recipe.indexOf(item));
                 item.selected = false;
                 item.table = 'products';
             }
         });
+        console.log(deleteItems);
         for(var i=deleteItems.length-1;i>=0;i--){
             recipe.splice(deleteItems[i],1);
         }
         clearChecked.call(newData);
         createBodyTable(newData);
+        createBodyTable(recipe);
     }
     $('#clearRecipe').click(clearRecipe);
-        function clearRecipe(){
+    function clearRecipe(){
         recipe.forEach(function(item){
             item.selected = true;
         });
@@ -107,19 +116,18 @@ console.log(recipe);
     var savedRecipe = [];
     $('#saveRecipe').click(saveRecipe);
     function saveRecipe () {
-        console.log(recipe);
         var recipeName = $('#recipeName').val();
-        if(recipe.length > 0 && $('#recipeName').val() !== ""){
-            console.log(recipeName);
+        if(recipe.length > 0 && recipeName !== ""){
+            $('#recipeList').append("<li>" + recipeName + "</li>");
             var recipeName = recipe.map(function (item){
                     var newItem = {};
                     Object.keys(item).forEach(function (key) {
                             newItem[key] = item[key];
                         }
                     );
-                    delete newItem.selected;
-                    delete newItem.html;
-                    newItem.Рецепт = $('#recipeName').val();
+                    //delete newItem.selected;
+                    //delete newItem.html;
+                    newItem.Рецепт = recipeName;
                     return newItem;
                 }
             );
@@ -127,7 +135,6 @@ console.log(recipe);
         }
         $('#recipeName').val('');
 
-        console.log(savedRecipe);
         return savedRecipe;
     }
     function createHeadTable(tableID, position, dataForTable) {
@@ -172,7 +179,6 @@ console.log(recipe);
     createBodyTable(newData);
 
     $('th').click(function() {
-        console.dir(savedRecipe);
         var table = $(this).closest('table');
         var rows = table.find("tbody > tr").toArray().sort(comparer($(this).index()));
         this.asc = !this.asc;
@@ -192,6 +198,13 @@ console.log(recipe);
     function getCellValue(row, index){
         return $(row).children('td').eq(index).html();
     }
+    $('#recipeList').on('click','li',function(){
+        clearRecipe();
+        console.log(savedRecipe[$(this).index()]);
+        recipe = savedRecipe[$(this).index()];
+        $('#recipeName').val($(this).text());
+        createBodyTable(savedRecipe[$(this).index()]);
+    });
     /*function filterData(data, field, min, max) {
      return data.filter(function (item) {
      var sourceValue = +item[field].replace('-','0');
